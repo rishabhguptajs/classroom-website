@@ -2,12 +2,16 @@ import Classroom from '../models/Classroom.js';
 import User from '../models/User.js';
 
 export const createClassroom = async (req, res) => {
-    const { name, startTime, endTime, days, teacherId } = req.body;
+    const { name, startTime, endTime, days } = req.body;
+    const teacherId = req.user.id;
 
     try {
         const teacher = await User.findById(teacherId);
-        if (!teacher || teacher.role !== 'Teacher') {
-            return res.status(400).json({ message: 'Invalid teacher ID' });
+        if (!teacher || (teacher.role !== 'Teacher' && teacher.role !== 'Principal')) {
+            return res.status(400).json({ 
+                message: 'Invalid teacher ID',
+                user: teacher,
+            });
         }
 
         const classroom = new Classroom({
@@ -39,6 +43,10 @@ export const assignStudentToClassroom = async (req, res) => {
         const student = await User.findById(studentId);
         if (!student || student.role !== 'Student') {
             return res.status(400).json({ message: 'Invalid student ID' });
+        }
+
+        if(classroom.students.includes(studentId)) {
+            return res.status(400).json({ message: 'Student already assigned to classroom' });
         }
 
         classroom.students.push(studentId);

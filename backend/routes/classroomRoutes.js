@@ -10,7 +10,7 @@ import { protect } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/create', protect(['Principal']), createClassroom);
+router.post('/create', protect(['Principal', 'Teacher']), createClassroom);
 router.post('/assign-student', protect(['Principal', 'Teacher']), assignStudentToClassroom);
 router.get('/users', protect(['Principal']), getTeachersAndStudents);
 router.put('/update-user', protect(['Principal']), updateUser);
