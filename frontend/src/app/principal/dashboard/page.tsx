@@ -39,7 +39,11 @@ export default function PrincipalDashboard() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-blue-500 to-purple-600">
       <div className="flex-grow container mx-auto p-6 max-w-6xl">
+      <Link href={'/'} className="my-2">
+          <span className="text-black rounded-lg bg-white p-2 text-sm font-semibold">Back to Home</span>
+        </Link>
         <h1 className="text-4xl font-bold mb-8 p-4 rounded-lg text-center bg-white">
+        
           Principal Dashboard
         </h1>
 

@@ -3,13 +3,15 @@
 import { useState } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 import { useAuth } from '../../context/authContext';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const router = useRouter();
 
-  const { login } = useAuth();
+  const { login, user } = useAuth();
 
   const handleLogin = async (e: any) => {
     e.preventDefault();
