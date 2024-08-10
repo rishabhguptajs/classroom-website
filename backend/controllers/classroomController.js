@@ -8,7 +8,7 @@ export const createClassroom = async (req, res) => {
     try {
         const teacher = await User.findById(teacherId);
         if (!teacher || (teacher.role !== 'Teacher' && teacher.role !== 'Principal')) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 message: 'Invalid teacher ID',
                 user: teacher,
             });
@@ -43,7 +43,7 @@ export const assignStudentToClassroom = async (req, res) => {
             return res.status(400).json({ message: 'Invalid student ID' });
         }
 
-        if(classroom.students.includes(studentId)) {
+        if (classroom.students.includes(studentId)) {
             return res.status(400).json({ message: 'Student already assigned to classroom' });
         }
 
@@ -107,34 +107,46 @@ export const deleteUser = async (req, res) => {
 
 export const assignTeacherToClassroom = async (req, res) => {
     const { classroomId, teacherId } = req.body;
-  
+
     try {
-      const classroom = await Classroom.findById(classroomId);
-      if (!classroom) {
-        return res.status(404).json({ message: 'Classroom not found' });
-      }
-  
-      const teacher = await User.findById(teacherId);
-      if (!teacher || teacher.role !== 'Teacher') {
-        return res.status(400).json({ message: 'Invalid teacher ID' });
-      }
-  
-      classroom.teacher = teacherId;
-      await classroom.save();
-  
-      res.json(classroom);
+        const classroom = await Classroom.findById(classroomId);
+        if (!classroom) {
+            return res.status(404).json({ message: 'Classroom not found' });
+        }
+
+        const teacher = await User.findById(teacherId);
+        if (!teacher || teacher.role !== 'Teacher') {
+            return res.status(400).json({ message: 'Invalid teacher ID' });
+        }
+
+        classroom.teacher = teacherId;
+        await classroom.save();
+
+        res.json(classroom);
     } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Error in assigning teacher to classroom');
+        console.error(err.message);
+        res.status(500).send('Error in assigning teacher to classroom');
     }
-  };
-  
-  export const getAllClassrooms = async (req, res) => {
+};
+
+export const getAllClassrooms = async (req, res) => {
     try {
-      const classrooms = await Classroom.find();
-      res.json(classrooms);
+        const classrooms = await Classroom.find();
+        res.json(classrooms);
     } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
+        console.error(err.message);
+        res.status(500).send('Server Error');
     }
-  };
+};
+
+export const getTeachersClassrooms = async (req, res) => {
+    const teacherId = req.params.teacherId;
+
+    try {
+        const classrooms = await Classroom.find({ teacher: teacherId });
+        res.json(classrooms);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Error in fetching classrooms');
+    }
+}
