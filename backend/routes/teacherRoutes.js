@@ -19,7 +19,7 @@ router.delete('/delete-student/:studentId', protect(['Teacher']), deleteStudent)
 
 // teacher routes
 router.post('/create-teacher', protect(['Principal']), createTeacher);
-router.get('/teachers', protect(['Principal']), getTeachers);
+router.get('/all', protect(['Principal']), getTeachers);
 router.put('/update-teacher', protect(['Principal']), updateTeacher);
 router.delete('/delete-teacher/:teacherId', protect(['Principal']), deleteTeacher);
 

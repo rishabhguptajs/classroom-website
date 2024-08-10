@@ -1,6 +1,7 @@
 import express from 'express';
 import connectDB from './config/db.js';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
 import classroomRoutes from './routes/classroomRoutes.js';
 import teacherRoutes from './routes/teacherRoutes.js';
@@ -13,6 +14,7 @@ connectDB();
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/classrooms', classroomRoutes);
