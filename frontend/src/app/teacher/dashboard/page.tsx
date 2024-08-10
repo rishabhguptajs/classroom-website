@@ -5,9 +5,22 @@ import { useRouter } from "next/navigation"
 import axios from "axios"
 import Link from "next/link"
 
+interface Student {
+  _id: string
+  email: string
+}
+
+interface Classroom {
+  _id: string
+  name: string
+  sessions: { _id: string; day: string; startTime: string; endTime: string }[]
+  students: string[]
+}
+
 const TeacherDashboard = () => {
   const router = useRouter()
-  const [classrooms, setClassrooms] = useState<any[]>([])
+  const [classrooms, setClassrooms] = useState<Classroom[]>([])
+  const [students, setStudents] = useState<Student[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -20,8 +33,6 @@ const TeacherDashboard = () => {
         return
       }
 
-      console.log(teacher)
-
       try {
         const res = await axios.get(
           `${process.env.NEXT_PUBLIC_SERVER_URL}/api/classrooms/getclass/${teacher.id}`,
@@ -31,7 +42,30 @@ const TeacherDashboard = () => {
             },
           }
         )
-        setClassrooms(res.data)
+        const classroomsData = res.data
+
+        const studentIds = classroomsData.flatMap((classroom: Classroom) =>
+          classroom.students
+        )
+
+        if (studentIds.length > 0) {
+          const studentsRes = await axios.post(
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/students/getdetails`,
+            { studentIds },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          )
+
+          console.log("Fetched students data:", studentsRes.data)
+          setStudents(Array.isArray(studentsRes.data) ? studentsRes.data : [])
+        } else {
+          setStudents([])
+        }
+
+        setClassrooms(classroomsData)
       } catch (err: any) {
         console.error("Error fetching classrooms:", err)
         setError("Failed to fetch classrooms.")
@@ -42,6 +76,15 @@ const TeacherDashboard = () => {
 
     fetchClassrooms()
   }, [])
+
+  const getStudentName = (studentId: string) => {
+    if (!Array.isArray(students)) {
+      console.error("Students state is not an array:", students)
+      return "Unknown"
+    }
+    const student = students.find((s) => s._id === studentId)
+    return student ? student.email : "Unknown"
+  }
 
   if (loading) return <div className="text-center p-4">Loading...</div>
   if (error) return <div className="text-center p-4 text-red-500">{error}</div>
@@ -94,7 +137,7 @@ const TeacherDashboard = () => {
                         </button>
                       </li>
                     </div>
-                    {classroom.sessions.map((session: any) => (
+                    {classroom.sessions.map((session) => (
                       <p key={session._id} className="pl-4">
                         <span className="font-semibold">{session.day} - </span>
                         <span className="ml-2">
@@ -105,11 +148,12 @@ const TeacherDashboard = () => {
                   </div>
 
                   <ul className="list-disc list-inside text-right">
+                    <span className="font-semibold text-xl">Students</span>
                     {classroom.students.length === 0 ? (
                       <li>No students assigned.</li>
                     ) : (
-                      classroom.students.map((student: any) => (
-                        <li key={student._id}>{student}</li>
+                      classroom.students.map((studentId) => (
+                        <li key={studentId}>{getStudentName(studentId)}</li>
                       ))
                     )}
                   </ul>

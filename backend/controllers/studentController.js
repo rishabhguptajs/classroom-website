@@ -35,8 +35,21 @@ export const createStudent = async (req, res) => {
         res.status(201).json(student);
     } catch (error) {
         console.error(error.message);
-        res.status(500).json({ 
-            message: 'Error in creating student', 
-            error: error.message });
+        res.status(500).json({
+            message: 'Error in creating student',
+            error: error.message
+        });
+    }
+}
+export const getDetails = async (req, res) => {
+    try {
+        const { studentIds } = req.body;
+
+        const users = await User.find({ _id: { $in: studentIds } });
+
+        res.json(users);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Error in fetching user details');
     }
 }
