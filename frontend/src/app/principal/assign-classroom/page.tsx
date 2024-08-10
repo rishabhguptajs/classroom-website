@@ -79,55 +79,61 @@ export default function AssignClassroomToTeacher() {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <Toaster />
-      <h2 className="text-2xl font-bold mb-6 text-center">Assign Teacher</h2>
-      <div className="flex justify-between items-center mb-4">
-        <button
-          onClick={() => router.push("/principal/dashboard")}
-          className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Back to Dashboard
-        </button>
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700">Select Classroom</label>
-        <select
-          className="w-full px-4 py-2 mt-2 border rounded-md"
-          value={selectedClassroom}
-          onChange={(e) => setSelectedClassroom(e.target.value)}
-        >
-          <option value="">Select a Classroom</option>
-          {classrooms.map((classroom) => (
-            <option key={classroom._id} value={classroom._id}>
-              {classroom.name}
-            </option>
-          ))}
-        </select>
-      </div>
+    <div className="min-h-screen bg-gradient-to-r from-teal-400 to-blue-500 flex flex-col">
+      <div className="flex-grow container mx-auto p-6 max-w-4xl">
+        <Toaster />
+        <h2 className="text-3xl font-bold mb-6 text-center text-white bg-opacity-75 p-4 rounded-lg">
+          Assign Teacher to Classroom
+        </h2>
+        <div className="flex justify-between items-center mb-6">
+          <button
+            onClick={() => router.push("/principal/dashboard")}
+            className="bg-gray-600 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105"
+          >
+            Back to Dashboard
+          </button>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="mb-6">
+            <label className="block text-gray-700">Select Classroom</label>
+            <select
+              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              value={selectedClassroom}
+              onChange={(e) => setSelectedClassroom(e.target.value)}
+            >
+              <option value="">Select a Classroom</option>
+              {classrooms.map((classroom) => (
+                <option key={classroom._id} value={classroom._id}>
+                  {classroom.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-      <div className="mb-4">
-        <label className="block text-gray-700">Select Teacher</label>
-        <select
-          className="w-full px-4 py-2 mt-2 border rounded-md"
-          value={selectedTeacher}
-          onChange={(e) => setSelectedTeacher(e.target.value)}
-        >
-          <option value="">Select a Teacher</option>
-          {teachers.map((teacher) => (
-            <option key={teacher._id} value={teacher._id}>
-              {teacher.email}
-            </option>
-          ))}
-        </select>
-      </div>
+          <div className="mb-6">
+            <label className="block text-gray-700">Select Teacher</label>
+            <select
+              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              value={selectedTeacher}
+              onChange={(e) => setSelectedTeacher(e.target.value)}
+            >
+              <option value="">Select a Teacher</option>
+              {teachers.map((teacher) => (
+                <option key={teacher._id} value={teacher._id}>
+                  {teacher.email}
+                </option>
+              ))}
+            </select>
+          </div>
 
-      <button
-        onClick={handleAssign}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
-      >
-        Assign Teacher
-      </button>
+          <button
+            onClick={handleAssign}
+            className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105"
+          >
+            Assign Teacher
+          </button>
+        </div>
+      </div>
     </div>
   )
 }

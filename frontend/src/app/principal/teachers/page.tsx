@@ -44,7 +44,7 @@ export default function Teachers() {
   const handleDelete = async (id: string) => {
     try {
       await axios.delete(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/teachers/${id}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/teachers/delete-teacher/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -67,7 +67,7 @@ export default function Teachers() {
   const handleAddTeacher = async () => {
     try {
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/teachers/add`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/teachers/create-teacher`,
         {
           email: newTeacherEmail,
           password: newTeacherPassword,
@@ -78,10 +78,13 @@ export default function Teachers() {
           },
         }
       )
-
-      setTeachers([
-        ...teachers,
-        { _id: res.data._id, email: newTeacherEmail }, // Fixed here
+  
+      // Log response for debugging
+      console.log('Add Teacher Response:', res.data);
+  
+      setTeachers((prevTeachers) => [
+        ...prevTeachers,
+        { _id: res.data._id, email: newTeacherEmail },
       ])
       setNewTeacherEmail("")
       setNewTeacherPassword("")
@@ -92,11 +95,18 @@ export default function Teachers() {
   }
 
   const handleSubmitUpdate = async () => {
+    if (!selectedTeacher) {
+      console.error("No teacher selected for update.");
+      return;
+    }
+
     try {
-      await axios.put(
+      console.log('Updating Teacher:', selectedTeacher._id, updatedTeacherEmail, updatedTeacherPassword);
+  
+      const response = await axios.put(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/teachers/update-teacher`,
         {
-          id: selectedTeacher._id,
+          teacherId: selectedTeacher._id,
           email: updatedTeacherEmail,
           password: updatedTeacherPassword,
         },
@@ -105,18 +115,24 @@ export default function Teachers() {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
-      )
-
-      setTeachers((prevTeachers) =>
-        prevTeachers.map((teacher) =>
-          teacher._id === selectedTeacher._id
-            ? { ...teacher, email: updatedTeacherEmail }
-            : teacher
-        )
-      )
-      setIsUpdateModalOpen(false)
+      );
+  
+      console.log('Update Response:', response.data);
+  
+      // Fetch the updated list of teachers
+      const resTeachers = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/teachers/all`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+  
+      setTeachers(resTeachers.data);
+      setIsUpdateModalOpen(false);
     } catch (err: any) {
-      console.error("Error updating teacher:", err)
+      console.error("Error updating teacher:", err.response?.data || err.message);
     }
   }
 
@@ -220,7 +236,7 @@ export default function Teachers() {
         </div>
       )}
 
-      {isUpdateModalOpen && (
+      {isUpdateModalOpen && selectedTeacher && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md text-gray-800">
             <h3 className="text-2xl font-semibold mb-4 text-center">

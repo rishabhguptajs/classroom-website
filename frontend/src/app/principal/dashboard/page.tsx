@@ -39,7 +39,7 @@ export default function PrincipalDashboard() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-blue-500 to-purple-600">
       <div className="flex-grow container mx-auto p-6 max-w-6xl">
-        <h1 className="text-4xl font-bold mb-8 p-4 rounded-lg text-center bg-black text-teal-50">
+        <h1 className="text-4xl font-bold mb-8 p-4 rounded-lg text-center bg-white">
           Principal Dashboard
         </h1>
 

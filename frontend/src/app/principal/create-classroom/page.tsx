@@ -21,7 +21,7 @@ export default function CreateClassroom() {
   };
 
   const handleSessionChange = (index: number, field: string, value: string) => {
-    const updatedSessions = sessions.map((session, i) => 
+    const updatedSessions = sessions.map((session, i) =>
       i === index ? { ...session, [field]: value } : session
     );
     setSessions(updatedSessions);
@@ -57,82 +57,87 @@ export default function CreateClassroom() {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <Toaster />
-      <h2 className="text-2xl font-bold mb-6 text-center">Create Classroom</h2>
-      <div className="flex justify-between items-center mb-4">
-        <button
-          onClick={() => router.push("/principal/dashboard")}
-          className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Back to Dashboard
-        </button>
-      </div>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-gray-700">Classroom Name</label>
-          <input
-            type="text"
-            className="w-full px-4 py-2 mt-2 border rounded-md"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter classroom name"
-            required
-          />
+    <div className="min-h-screen bg-gradient-to-r from-teal-400 to-blue-500 flex flex-col">
+      <div className="flex-grow container mx-auto p-6 max-w-4xl">
+        <Toaster />
+        <h2 className="text-3xl font-bold mb-6 text-center text-white bg-opacity-75 p-4 rounded-lg">
+          Create Classroom
+        </h2>
+        <div className="flex justify-between items-center mb-6">
+          <button
+            onClick={() => router.push("/principal/dashboard")}
+            className="bg-gray-600 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105"
+          >
+            Back to Dashboard
+          </button>
         </div>
-
-        {sessions.map((session, index) => (
-          <div key={index} className="mb-4 border p-4 rounded-md">
-            <label className="block text-gray-700">Day</label>
+        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
+          <div className="mb-4">
+            <label className="block text-gray-700">Classroom Name</label>
             <input
               type="text"
-              className="w-full px-4 py-2 mt-2 border rounded-md"
-              value={session.day}
-              onChange={(e) => handleSessionChange(index, "day", e.target.value)}
-              placeholder="e.g., Monday"
+              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter classroom name"
               required
             />
-            <label className="block text-gray-700 mt-2">Start Time</label>
-            <input
-              type="time"
-              className="w-full px-4 py-2 mt-2 border rounded-md"
-              value={session.startTime}
-              onChange={(e) => handleSessionChange(index, "startTime", e.target.value)}
-              required
-            />
-            <label className="block text-gray-700 mt-2">End Time</label>
-            <input
-              type="time"
-              className="w-full px-4 py-2 mt-2 border rounded-md"
-              value={session.endTime}
-              onChange={(e) => handleSessionChange(index, "endTime", e.target.value)}
-              required
-            />
+          </div>
+
+          {sessions.map((session, index) => (
+            <div key={index} className="mb-6 border p-4 rounded-md bg-gray-50 shadow-sm">
+              <label className="block text-gray-700">Day</label>
+              <input
+                type="text"
+                className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                value={session.day}
+                onChange={(e) => handleSessionChange(index, "day", e.target.value)}
+                placeholder="e.g., Monday"
+                required
+              />
+              <label className="block text-gray-700 mt-2">Start Time</label>
+              <input
+                type="time"
+                className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                value={session.startTime}
+                onChange={(e) => handleSessionChange(index, "startTime", e.target.value)}
+                required
+              />
+              <label className="block text-gray-700 mt-2">End Time</label>
+              <input
+                type="time"
+                className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                value={session.endTime}
+                onChange={(e) => handleSessionChange(index, "endTime", e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => handleRemoveSession(index)}
+                className="bg-red-600 hover:bg-red-800 text-white font-bold py-1 px-2 rounded-lg mt-4 transition-transform transform hover:scale-105"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+
+          <div className="flex justify-between items-center mb-4">
             <button
               type="button"
-              onClick={() => handleRemoveSession(index)}
-              className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded mt-2"
+              onClick={handleAddSession}
+              className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105"
             >
-              Remove
+              Add Session
+            </button>
+            <button
+              type="submit"
+              className="bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105"
+            >
+              Create Classroom
             </button>
           </div>
-        ))}
-        
-        <button
-          type="button"
-          onClick={handleAddSession}
-          className="bg-blue-500 mr-2 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
-        >
-          Add Session
-        </button>
-        
-        <button
-          type="submit"
-          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4"
-        >
-          Create Classroom
-        </button>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }
