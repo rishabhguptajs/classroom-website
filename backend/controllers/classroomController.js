@@ -132,12 +132,28 @@ export const assignTeacherToClassroom = async (req, res) => {
 export const getAllClassrooms = async (req, res) => {
     try {
         const classrooms = await Classroom.find();
-        res.json(classrooms);
+
+        const teacherIds = [...new Set(classrooms.map(classroom => classroom.teacher))];
+
+        const teachers = await User.find({ _id: { $in: teacherIds } });
+
+        const teacherMap = teachers.reduce((acc, teacher) => {
+            acc[teacher._id] = teacher.email; 
+            return acc;
+        }, {});
+
+        const classroomsWithTeacherNames = classrooms.map(classroom => ({
+            ...classroom._doc,
+            teacher: teacherMap[classroom.teacher] || "Unknown"
+        }));
+
+        res.json(classroomsWithTeacherNames);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
     }
 };
+
 
 export const getTeachersClassrooms = async (req, res) => {
     const teacherId = req.params.teacherId;
