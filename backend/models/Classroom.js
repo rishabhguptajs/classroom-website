@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
-const classroomSchema = new mongoose.Schema({
-  name: {
+const sessionSchema = new mongoose.Schema({
+  day: {
     type: String,
     required: true,
   },
@@ -13,8 +13,15 @@ const classroomSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  days: {
-    type: [String],
+});
+
+const classroomSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  sessions: {
+    type: [sessionSchema],
     required: true,
   },
   teacher: {
@@ -23,7 +30,7 @@ const classroomSchema = new mongoose.Schema({
   },
   students: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', 
+    ref: 'User',
   }],
 });
 

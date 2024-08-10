@@ -26,7 +26,7 @@ export const login = async (req, res) => {
             role: user.role
         } });
     } catch (error) {
-        console.error(err.message);
+        console.log(error.message);
         res.status(500).send('Error in logging in');
     }
 }

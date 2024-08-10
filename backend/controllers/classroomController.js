@@ -2,7 +2,7 @@ import Classroom from '../models/Classroom.js';
 import User from '../models/User.js';
 
 export const createClassroom = async (req, res) => {
-    const { name, startTime, endTime, days } = req.body;
+    const { name, sessions } = req.body;
     const teacherId = req.user.id;
 
     try {
@@ -16,9 +16,7 @@ export const createClassroom = async (req, res) => {
 
         const classroom = new Classroom({
             name,
-            startTime,
-            endTime,
-            days,
+            sessions,
             teacher: teacherId,
         });
 
@@ -106,3 +104,37 @@ export const deleteUser = async (req, res) => {
         res.status(500).send('Error in deleting user');
     }
 };
+
+export const assignTeacherToClassroom = async (req, res) => {
+    const { classroomId, teacherId } = req.body;
+  
+    try {
+      const classroom = await Classroom.findById(classroomId);
+      if (!classroom) {
+        return res.status(404).json({ message: 'Classroom not found' });
+      }
+  
+      const teacher = await User.findById(teacherId);
+      if (!teacher || teacher.role !== 'Teacher') {
+        return res.status(400).json({ message: 'Invalid teacher ID' });
+      }
+  
+      classroom.teacher = teacherId;
+      await classroom.save();
+  
+      res.json(classroom);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Error in assigning teacher to classroom');
+    }
+  };
+  
+  export const getAllClassrooms = async (req, res) => {
+    try {
+      const classrooms = await Classroom.find();
+      res.json(classrooms);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  };

@@ -88,21 +88,24 @@ export const getStudentsInClassroom = async (req, res) => {
 };
 
 export const updateStudent = async (req, res) => {
-  const { studentId, email } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const student = await User.findById(studentId);
-    if (!student || student.role !== 'Student') {
-      return res.status(404).json({ message: 'Student not found' });
+    const user = await User.findOne({ email: email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    student.email = email || student.email;
-    await student.save();
+    user.email = email || user.email;
+    user.password = password || user.password;
 
-    res.json(student);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Error in updating student');
+    await user.save();
+
+    res.status(200).json({ message: 'Student updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error while updating student' });
   }
 };
 
@@ -119,5 +122,27 @@ export const deleteStudent = async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Error in deleting student');
+  }
+};
+
+export const getAllStudents = async (req, res) => {
+  try {
+    const students = await User.find({ role: 'Student' });
+    res.json(students);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Error in getting students');
+  }
+}
+
+export const getUsersByRole = async (req, res) => {
+  const { role } = req.query;
+
+  try {
+    const users = await User.find({ role });
+    res.json({ teachers: users });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
   }
 };
