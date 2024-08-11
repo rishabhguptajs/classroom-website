@@ -48,13 +48,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsAuthenticated(true);
 
       const role = res.data.user.role;
-      if (role === "Principal") {
-        router.push("/principal/dashboard");
-      } else if (role === "Teacher") {
-        router.push("/teacher/dashboard");
-      } else if (role === "Student") {
-        router.push("/student/dashboard");
-      }
+      setTimeout(() => {
+        if (role === "Principal") {
+          router.push("/principal/dashboard");
+        } else if (role === "Teacher") {
+          router.push("/teacher/dashboard");
+        } else if (role === "Student") {
+          router.push("/student/dashboard");
+        }
+      }, 800);
     } catch (err: any) {
       console.log("Login Error:", err.message);
     }
@@ -64,7 +66,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem("token");
     setUser(null);
     setIsAuthenticated(false);
-    router.push("/login");
   };
 
   if (isLoading) {

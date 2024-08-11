@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import axios from "axios"
+import Link from "next/link"
 
 const Students = () => {
   const [students, setStudents] = useState<any[]>([])
@@ -122,6 +123,14 @@ const Students = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-blue-500 to-purple-600 text-white">
       <div className="container mx-auto p-6 max-w-6xl flex-grow">
+        <div className="flex justify-between items-center mb-6">
+          <Link
+            href="/teacher/dashboard"
+            className="bg-gray-600 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105"
+          >
+            Back to Dashboard
+          </Link>
+        </div>
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-4xl font-bold">Students</h2>
           <button
