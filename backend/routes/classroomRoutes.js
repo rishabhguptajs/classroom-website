@@ -8,6 +8,7 @@ import {
   assignTeacherToClassroom,
   getAllClassrooms,
   getTeachersClassrooms,
+  getStudentsClassrooms,
 } from '../controllers/classroomController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 
@@ -21,5 +22,6 @@ router.get('/users', protect(['Principal']), getTeachersAndStudents);
 router.put('/update-user', protect(['Principal']), updateUser);
 router.delete('/delete-user/:id', protect(['Principal']), deleteUser);
 router.get('/getclass/:teacherId', protect(['Teacher']), getTeachersClassrooms);
+router.get('/student-class/:studentId', protect(['Student']), getStudentsClassrooms);
 
 export default router;

@@ -166,3 +166,19 @@ export const getTeachersClassrooms = async (req, res) => {
         res.status(500).send('Error in fetching classrooms');
     }
 }
+
+export const getStudentsClassrooms = async (req, res) => {
+    const studentId = req.params.studentId;
+  
+    try {
+      const classrooms = await Classroom.find({ students: studentId })
+        .populate('teacher', 'email')
+        .populate('students', 'name email');
+  
+      res.json(classrooms);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Error in fetching classrooms');
+    }
+  };
+  
