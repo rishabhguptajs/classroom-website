@@ -1,18 +1,18 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import Link from "next/link"
+import { useEffect, useState } from "react"
 
 interface Classroom {
-  _id: string;
-  name: string;
-  students: string[];
-  teacher: string;
-  sessions: string[];
+  _id: string
+  name: string
+  students: string[]
+  teacher: string
+  sessions: string[]
 }
 
 export default function PrincipalDashboard() {
-  const [classrooms, setClassrooms] = useState<Classroom[]>([]);
+  const [classrooms, setClassrooms] = useState<Classroom[]>([])
 
   const fetchClassrooms = async () => {
     try {
@@ -23,27 +23,28 @@ export default function PrincipalDashboard() {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
-      );
+      )
 
-      const data = await res.json();
-      setClassrooms(data);
+      const data = await res.json()
+      setClassrooms(data)
     } catch (err: any) {
-      console.error("Error fetching classrooms:", err);
+      console.error("Error fetching classrooms:", err)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchClassrooms();
-  }, []);
+    fetchClassrooms()
+  }, [])
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-blue-500 to-purple-600">
       <div className="flex-grow container mx-auto p-6 max-w-6xl">
-      <Link href={'/'} className="my-2">
-          <span className="text-black rounded-lg bg-white p-2 text-sm font-semibold">Back to Home</span>
+        <Link href={"/"} className="my-2">
+          <span className="text-black rounded-lg bg-white p-2 text-sm font-semibold">
+            Back to Home
+          </span>
         </Link>
         <h1 className="text-4xl font-bold mb-8 p-4 rounded-lg text-center bg-white">
-        
           Principal Dashboard
         </h1>
 
@@ -84,7 +85,8 @@ export default function PrincipalDashboard() {
                 {classroom.name}
               </h3>
               <p className="text-gray-700">
-                <span className="font-semibold">Teacher:</span> {classroom.teacher}
+                <span className="font-semibold">Teacher:</span>{" "}
+                {classroom.teacher}
               </p>
               <p className="text-gray-700">
                 <span className="font-semibold">Students:</span>{" "}
@@ -99,5 +101,5 @@ export default function PrincipalDashboard() {
         </div>
       </div>
     </div>
-  );
+  )
 }

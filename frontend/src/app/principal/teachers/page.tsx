@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { useRouter } from "next/navigation"
+import toast, { Toaster } from "react-hot-toast"
 
 export default function Teachers() {
   const [teachers, setTeachers] = useState<any[]>([])
@@ -52,6 +53,7 @@ export default function Teachers() {
         }
       )
       setTeachers(teachers.filter((teacher: any) => teacher._id !== id))
+      toast.success("Teacher deleted successfully.")
     } catch (err: any) {
       console.error("Error deleting teacher:", err)
     }
@@ -79,7 +81,6 @@ export default function Teachers() {
         }
       )
   
-      // Log response for debugging
       console.log('Add Teacher Response:', res.data);
   
       setTeachers((prevTeachers) => [
@@ -88,9 +89,13 @@ export default function Teachers() {
       ])
       setNewTeacherEmail("")
       setNewTeacherPassword("")
-      setIsModalOpen(false)
+      toast.success("Teacher added successfully.")
+      setTimeout(() => {
+        setIsModalOpen(false)
+      }, 700);
     } catch (err: any) {
       console.error("Error adding teacher:", err)
+      toast.error("Failed to add teacher.")
     }
   }
 
@@ -101,9 +106,7 @@ export default function Teachers() {
     }
 
     try {
-      console.log('Updating Teacher:', selectedTeacher._id, updatedTeacherEmail, updatedTeacherPassword);
-  
-      const response = await axios.put(
+      await axios.put(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/teachers/update-teacher`,
         {
           teacherId: selectedTeacher._id,
@@ -116,10 +119,7 @@ export default function Teachers() {
           },
         }
       );
-  
-      console.log('Update Response:', response.data);
-  
-      // Fetch the updated list of teachers
+    
       const resTeachers = await axios.get(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/teachers/all`,
         {
@@ -130,7 +130,10 @@ export default function Teachers() {
       );
   
       setTeachers(resTeachers.data);
-      setIsUpdateModalOpen(false);
+      toast.success("Teacher updated successfully.");
+      setTimeout(() => {
+        setIsUpdateModalOpen(false);
+      }, 700);
     } catch (err: any) {
       console.error("Error updating teacher:", err.response?.data || err.message);
     }
@@ -141,6 +144,7 @@ export default function Teachers() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+      <Toaster />
       <div className="container mx-auto p-6 max-w-6xl flex-grow">
         <h2 className="text-4xl font-bold mb-8 text-center">Teachers</h2>
 
@@ -250,6 +254,7 @@ export default function Teachers() {
                 onChange={(e) => setUpdatedTeacherEmail(e.target.value)}
                 className="mt-1 p-2 w-full border border-gray-300 rounded"
                 placeholder="Enter new email"
+                disabled
               />
             </div>
             <div className="mb-6">

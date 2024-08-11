@@ -21,7 +21,7 @@ export default function Home() {
         {user ? (
           <div className="text-center flex flex-col items-center">
             <h2 className="text-2xl mb-4 font-semibold text-white">
-              Hello, {user.email}!
+              Hello, {user.role}!
             </h2>
             <Link href={`/${user.role.toLowerCase()}/dashboard`}>
               <span className="m-4 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg shadow-lg transform transition duration-200 hover:scale-105 focus:outline-none">
