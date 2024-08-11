@@ -47,7 +47,7 @@ export default function AssignClassroomToTeacher() {
         setClassrooms(classroomRes.data)
         setTeachers(teacherRes.data)
       } catch (error: any) {
-        toast.error("Failed to load data: " + error.message)
+        toast.error("Failed to load data: " + error.response.data.message)
       }
     }
 
@@ -74,7 +74,7 @@ export default function AssignClassroomToTeacher() {
       setSelectedTeacher("")
       router.push("/principal/dashboard")
     } catch (error: any) {
-      toast.error("Failed to assign teacher: " + error.message)
+      toast.error("Failed to assign: " + error.response.data.message)
     }
   }
 

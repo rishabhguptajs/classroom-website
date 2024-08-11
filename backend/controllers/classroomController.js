@@ -29,6 +29,29 @@ export const createClassroom = async (req, res) => {
     }
 };
 
+export const updateClassroom = async (req, res) => {
+    const { classroomId, sessions } = req.body;
+
+    if (!classroomId || !sessions) {
+        return res.status(400).json({ message: "Invalid request parameters." });
+    }
+
+    try {
+        const classroom = await Classroom.findById(classroomId);
+
+        if (!classroom) {
+            return res.status(404).json({ message: "Classroom not found." });
+        }
+
+        classroom.sessions = sessions;
+        await classroom.save();
+
+        res.status(200).json({ message: "Classroom sessions updated successfully." });
+    } catch (error) {
+        console.error("Error updating classroom:", error);
+        res.status(500).json({ message: "Server error. Please try again later." });
+    }
+};
 export const assignStudentToClassroom = async (req, res) => {
     const { classroomId, studentId } = req.body;
 
@@ -119,6 +142,12 @@ export const assignTeacherToClassroom = async (req, res) => {
             return res.status(400).json({ message: 'Invalid teacher ID' });
         }
 
+        const existingClassroom = await Classroom.findOne({ teacher: teacherId });
+
+        if (existingClassroom) {
+            return res.status(400).json({ message: 'Teacher already assigned to a classroom' });
+        }
+
         classroom.teacher = teacherId;
         await classroom.save();
 
@@ -138,7 +167,7 @@ export const getAllClassrooms = async (req, res) => {
         const teachers = await User.find({ _id: { $in: teacherIds } });
 
         const teacherMap = teachers.reduce((acc, teacher) => {
-            acc[teacher._id] = teacher.email; 
+            acc[teacher._id] = teacher.email;
             return acc;
         }, {});
 
@@ -169,16 +198,15 @@ export const getTeachersClassrooms = async (req, res) => {
 
 export const getStudentsClassrooms = async (req, res) => {
     const studentId = req.params.studentId;
-  
+
     try {
-      const classrooms = await Classroom.find({ students: studentId })
-        .populate('teacher', 'email')
-        .populate('students', 'name email');
-  
-      res.json(classrooms);
+        const classrooms = await Classroom.find({ students: studentId })
+            .populate('teacher', 'email')
+            .populate('students', 'name email');
+
+        res.json(classrooms);
     } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Error in fetching classrooms');
+        console.error(err.message);
+        res.status(500).send('Error in fetching classrooms');
     }
-  };
-  
+};

@@ -9,12 +9,14 @@ import {
   getAllClassrooms,
   getTeachersClassrooms,
   getStudentsClassrooms,
+  updateClassroom,
 } from '../controllers/classroomController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
 router.post('/create', protect(['Principal', 'Teacher']), createClassroom);
+router.post('/update', protect(['Principal', 'Teacher']), updateClassroom);
 router.post('/assign-student', protect(['Principal', 'Teacher']), assignStudentToClassroom);
 router.post('/assign-teacher', assignTeacherToClassroom);
 router.get('/all', getAllClassrooms);

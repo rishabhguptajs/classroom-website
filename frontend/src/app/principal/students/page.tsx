@@ -1,115 +1,144 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react"
+import axios from "axios"
+import { useRouter } from "next/navigation"
+import toast, { Toaster } from "react-hot-toast"
 
 export default function Students() {
-  const [students, setStudents] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
-  const [newStudentEmail, setNewStudentEmail] = useState<string>('');
-  const [newStudentPassword, setNewStudentPassword] = useState<string>('');
-  const [currentStudent, setCurrentStudent] = useState<any>(null);
-  const [updatedEmail, setUpdatedEmail] = useState<string>('');
-  const [updatedPassword, setUpdatedPassword] = useState<string>('');
-  const router = useRouter();
+  const [students, setStudents] = useState<any[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false)
+  const [newStudentEmail, setNewStudentEmail] = useState<string>("")
+  const [newStudentPassword, setNewStudentPassword] = useState<string>("")
+  const [currentStudent, setCurrentStudent] = useState<any>(null)
+  const [updatedEmail, setUpdatedEmail] = useState<string>("")
+  const [updatedPassword, setUpdatedPassword] = useState<string>("")
+  const router = useRouter()
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/teachers/students/all`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        setStudents(res.data);
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/teachers/students/all`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        )
+        setStudents(res.data)
       } catch (err: any) {
-        console.error("Error fetching students:", err);
-        setError("Failed to fetch students.");
+        console.error("Error fetching students:", err)
+        setError("Failed to fetch students.")
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchStudents();
-  }, []);
+    fetchStudents()
+  }, [])
 
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/teachers/delete-student/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      setStudents(students.filter((student: any) => student._id !== id));
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/teachers/delete-student/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      )
+      setStudents(students.filter((student: any) => student._id !== id))
+      toast.success("Student deleted successfully.")
     } catch (err: any) {
-      console.error("Error deleting student:", err);
+      console.error("Error deleting student:", err)
+      toast.error("Failed to delete student.")
     }
-  };
+  }
 
   const handleAddStudent = async () => {
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/students/create-student`, {
-        email: newStudentEmail,
-        password: newStudentPassword,
-      }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/students/create-student`,
+        {
+          email: newStudentEmail,
+          password: newStudentPassword,
         },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      )
       setStudents([
         ...students,
         { email: newStudentEmail, _id: new Date().toISOString() },
-      ]);
-      setNewStudentEmail('');
-      setNewStudentPassword('');
-      setIsModalOpen(false);
+      ])
+      setNewStudentEmail("")
+      setNewStudentPassword("")
+      toast.success("Student added successfully.")
+      setTimeout(() => {
+        setIsModalOpen(false)
+      }, 1000);
     } catch (err: any) {
-      console.error("Error adding student:", err);
+      console.error("Error adding student:", err)
+      toast.error("Failed to add student.")
     }
-  };
+  }
 
   const handleUpdateStudent = async () => {
     if (currentStudent) {
       try {
-        await axios.put(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/teachers/update-student`, {
-          email: updatedEmail,
-          password: updatedPassword,
-        }, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        await axios.put(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/teachers/update-student`,
+          {
+            email: updatedEmail,
+            password: updatedPassword,
           },
-        });
-        setStudents(students.map((student: any) =>
-          student._id === currentStudent._id
-            ? { ...student, email: updatedEmail }
-            : student
-        ));
-        setUpdatedEmail('');
-        setUpdatedPassword('');
-        setIsEditModalOpen(false);
-        setCurrentStudent(null);
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        )
+        setStudents(
+          students.map((student: any) =>
+            student._id === currentStudent._id
+              ? { ...student, email: updatedEmail }
+              : student
+          )
+        )
+        setUpdatedEmail("")
+        setUpdatedPassword("")
+        toast.success("Student updated successfully.")
+        setTimeout(() => {
+          setIsEditModalOpen(false)
+        }, 1000)
+        setCurrentStudent(null)
       } catch (err: any) {
-        console.error("Error updating student:", err);
+        console.error("Error updating student:", err)
+        toast.error("Failed to update student.")
       }
     }
-  };
+  }
 
   const openEditModal = (student: any) => {
-    setCurrentStudent(student);
-    setUpdatedEmail(student.email);
-    setUpdatedPassword('');
-    setIsEditModalOpen(true);
-  };
+    setCurrentStudent(student)
+    setUpdatedEmail(student.email)
+    setUpdatedPassword("")
+    setIsEditModalOpen(true)
+  }
 
-  if (loading) return <div className="text-center p-4 text-white">Loading...</div>;
-  if (error) return <div className="text-center p-4 text-red-500">{error}</div>;
+  if (loading)
+    return <div className="text-center p-4 text-white">Loading...</div>
+  if (error) return <div className="text-center p-4 text-red-500">{error}</div>
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-blue-400 to-purple-500">
+      <Toaster />
       <div className="flex-grow container mx-auto p-6 max-w-6xl">
         <h2 className="text-3xl font-bold mb-6 text-center text-white bg-opacity-75 p-4 rounded-lg">
           Students
@@ -137,12 +166,14 @@ export default function Students() {
               </tr>
             </thead>
             <tbody>
-              {
-                students.length === 0 ? (
-                  <tr>
-                    <td colSpan={2} className="text-center py-4">No students found</td>
-                  </tr>
-                ) : students.map((student) => (
+              {students.length === 0 ? (
+                <tr>
+                  <td colSpan={2} className="text-center py-4">
+                    No students found
+                  </td>
+                </tr>
+              ) : (
+                students.map((student) => (
                   <tr key={student._id} className="border-b">
                     <td className="py-2 px-4">{student.email}</td>
                     <td className="py-2 px-4 text-center">
@@ -161,7 +192,7 @@ export default function Students() {
                     </td>
                   </tr>
                 ))
-              }
+              )}
             </tbody>
           </table>
         </div>
@@ -254,5 +285,5 @@ export default function Students() {
         )}
       </div>
     </div>
-  );
+  )
 }
